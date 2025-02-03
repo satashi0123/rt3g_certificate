@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
@@ -22,6 +22,11 @@ import {
   ThemeProvider,
   responsiveFontSizes,
 } from "@mui/material/styles";
+
+import uploadImageToCloudinary from "./services/apiCloudinary";
+import capitalizeFullname from "./utils/capitalizeFullname";
+import insertString from "./utils/insertString";
+import { useRef } from "react";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -68,65 +73,23 @@ export default function SimpleContainer() {
   const [error, setError] = useState("");
   const [isLoaded, setIsLoaded] = useState(true);
 
-  const handleImageLoad = () => {
-    setIsLoaded(true);
-    console.log("Image fully loaded!");
+  const targetRef = useRef(null);
+
+  const handleScroll = () => {
+    if (targetRef.current) {
+      targetRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
-  function processFullName(fullName) {
-    // Trim spaces at the start and end
-    let trimmedName = fullName.trim();
-
-    // Capitalize the first letter of each word
-    let capitalizedName = trimmedName
-      .split(" ")
-      .map((word) => {
-        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-      })
-      .join(" ");
-
-    // Convert to URL encoded string
-    console.log(capitalizedName);
-    let urlEncoded = encodeURIComponent(capitalizedName);
-    console.log("encoded Url");
-    console.log(urlEncoded);
-
-    return urlEncoded;
-  }
-
-  const uploadImageToCloudinary = async (file, folderName) => {
-    const cloudName = "btccongnghe3goc";
-    const unsignedUploadPreset = "ml_default";
-    const apiKey = "691291897447864";
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", unsignedUploadPreset);
-    formData.append("folder", folderName);
-    formData.append("api_key", apiKey);
-
-    try {
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-        { method: "POST", body: formData }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to upload image");
-      }
-      const data = await response.json();
-      console.log("data");
-      console.log(data);
-      return data.display_name;
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      throw error;
-    }
+  const handleImageLoad = () => {
+    setIsLoaded(true);
+    handleScroll();
+    // console.log("Image fully loaded!");
   };
 
   const handleUpload = async () => {
     if (!fullName) {
-      setError("Xin vui nhập họ và tên bạn.");
+      setError("Xin vui lòng nhập họ và tên bạn.");
       return;
     }
     if (!image) {
@@ -138,14 +101,15 @@ export default function SimpleContainer() {
     try {
       const folderName = "rt3g_cn/avatar_upload";
       const publicId = await uploadImageToCloudinary(image, folderName);
-      const imageEncodedUrl = processFullName(fullName);
+      const imageEncodedUrl = capitalizeFullname(fullName);
       const font = "poppins"; // vlgreatvibes.otf
       const fontSize = "60";
 
-      const certificateUrl = `https://res.cloudinary.com/btccongnghe3goc/image/upload/l_text:${font}_${fontSize}_bold_center_line_spacing_-20:${imageEncodedUrl},co_rgb:E60012,x_520,y_-400,c_fit,w_800/l_rt3g_cn:avatar_upload:${publicId},c_thumb,r_max,h_420,w_420,x_480,y_-40,bo_4px_solid_rgb:44889B/v1738059114/rt3g_runing-challenge-tet-2025_bvtik5.jpg`;
+      const certificateUrl = `https://res.cloudinary.com/btccongnghe3goc/image/upload/l_text:${font}_${fontSize}_bold_center_line_spacing_-20:${imageEncodedUrl},co_rgb:E60012,x_520,y_-400,c_fit,w_700/l_rt3g_cn:avatar_upload:${publicId},c_thumb,r_max,h_420,w_420,x_480,y_-40,bo_4px_solid_rgb:44889B/v1738059114/rt3g_runing-challenge-tet-2025_bvtik5.jpg`;
       setImageUrl(certificateUrl);
       setIsLoaded(false);
-      console.log(certificateUrl);
+
+      // console.log(certificateUrl);
     } catch (error) {
       setError("Error uploading image. Please try again.");
     } finally {
@@ -153,15 +117,6 @@ export default function SimpleContainer() {
       setImage(null);
     }
   };
-
-  function insertString(originalUrl, insertPart, after) {
-    const insertPosition = originalUrl.indexOf(after) + after.length;
-    return (
-      originalUrl.slice(0, insertPosition) +
-      insertPart +
-      originalUrl.slice(insertPosition)
-    );
-  }
 
   const handleDownload = (imageUrl) => {
     // Create a temporary link to trigger the download
@@ -223,7 +178,7 @@ export default function SimpleContainer() {
                 },
               }}
             >
-              <Container sx={{}}>
+              <Container>
                 <Typography
                   variant="h3"
                   gutterBottom
@@ -293,7 +248,7 @@ export default function SimpleContainer() {
                   bước chạy đầy cảm hứng!
                 </Typography>
               </Container>
-              <FormControl
+              <Box
                 sx={{
                   display: "flex",
                   alignItems: "center",
@@ -397,7 +352,7 @@ export default function SimpleContainer() {
                     </Typography>
                   </Container>
                 </Container>
-              </FormControl>
+              </Box>
               {imageUrl ? (
                 <>
                   <Container
@@ -477,7 +432,12 @@ export default function SimpleContainer() {
                   gap: "0.5rem",
                 }}
               >
-                <img width="100px" src="/rt3g_logo.png" alt="rt3g_logo" />
+                <img
+                  ref={targetRef}
+                  width="100px"
+                  src="/rt3g_logo.png"
+                  alt="rt3g_logo"
+                />
                 <Typography
                   variant="caption"
                   gutterBottom
