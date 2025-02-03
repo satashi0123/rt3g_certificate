@@ -17,7 +17,11 @@ import { createContext } from "react";
 
 import CircularProgress from "@mui/material/CircularProgress";
 
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import {
+  createTheme,
+  ThemeProvider,
+  responsiveFontSizes,
+} from "@mui/material/styles";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -33,7 +37,14 @@ const VisuallyHiddenInput = styled("input")({
 
 let theme = createTheme({
   spacing: 8,
+  typography: {
+    // In Chinese and Japanese the characters are usually larger,
+    // so a smaller fontsize may be appropriate.
+    fontSize: 14,
+  },
 });
+
+theme = responsiveFontSizes(theme);
 
 theme = createTheme(theme, {
   // Custom colors created with augmentColor go here
@@ -114,8 +125,12 @@ export default function SimpleContainer() {
   };
 
   const handleUpload = async () => {
+    if (!fullName) {
+      setError("Xin vui nhập họ và tên bạn.");
+      return;
+    }
     if (!image) {
-      setError("Please select an image to upload.");
+      setError("Xin vui lòng tải lên avatar của bạn.");
       return;
     }
     setError("");
@@ -127,7 +142,7 @@ export default function SimpleContainer() {
       const font = "poppins"; // vlgreatvibes.otf
       const fontSize = "60";
 
-      const certificateUrl = `https://res.cloudinary.com/btccongnghe3goc/image/upload/l_text:${font}_${fontSize}_bold_center:${imageEncodedUrl},co_rgb:E60012,x_480,y_-400,c_fit,w_650/l_rt3g_cn:avatar_upload:${publicId},c_thumb,r_max,h_400,w_400,x_480,y_-40,bo_4px_solid_rgb:44889B/v1738059114/rt3g_runing-challenge-tet-2025_bvtik5.jpg`;
+      const certificateUrl = `https://res.cloudinary.com/btccongnghe3goc/image/upload/l_text:${font}_${fontSize}_bold_center_line_spacing_-20:${imageEncodedUrl},co_rgb:E60012,x_520,y_-400,c_fit,w_800/l_rt3g_cn:avatar_upload:${publicId},c_thumb,r_max,h_420,w_420,x_480,y_-40,bo_4px_solid_rgb:44889B/v1738059114/rt3g_runing-challenge-tet-2025_bvtik5.jpg`;
       setImageUrl(certificateUrl);
       setIsLoaded(false);
       console.log(certificateUrl);
@@ -167,12 +182,12 @@ export default function SimpleContainer() {
         <PostContext.Provider value={{}}>
           <GlobalStyles
             styles={{
-              html: { fontSize: "62.5%" },
+              html: {},
               body: {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                width: "100vw",
+                width: "100%",
                 backgroundColor: "#b3d4d9 !important",
                 padding: "16px",
               },
@@ -184,7 +199,13 @@ export default function SimpleContainer() {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              p: 4,
+              p: {
+                xs: 2,
+                sm: 2,
+                md: 3,
+                lg: 4,
+                xl: 4,
+              },
               bgcolor: "#fff",
               borderTop: "8px solid #026E80",
               borderRadius: "8px",
@@ -192,12 +213,19 @@ export default function SimpleContainer() {
           >
             <Box
               sx={{
-                height: "100dvh",
+                height: "100%",
+                width: {
+                  xs: 300,
+                  sm: 500,
+                  md: 600,
+                  lg: 600,
+                  xl: 700,
+                },
               }}
             >
-              <Container maxWidth="sm" sx={{}}>
+              <Container sx={{}}>
                 <Typography
-                  variant="h5"
+                  variant="h3"
                   gutterBottom
                   sx={{
                     display: "flex",
@@ -205,33 +233,64 @@ export default function SimpleContainer() {
                     justifyContent: "center",
                     textAlign: "center",
                     textTransform: "uppercase",
-                    height: "12.5rem",
-                    fontSize: "3rem",
+                    minHeight: {
+                      xs: "6.25rem",
+                      sm: "6.25rem",
+                      md: "6.25rem",
+                      lg: "9.375rem",
+                      xl: "12.5rem",
+                    },
                     color: "#006f84",
                     fontWeight: "bold",
+                    marginBottom: {
+                      xs: "2rem",
+                      sm: "2rem",
+                      md: "3rem",
+                      lg: "4rem",
+                      xl: "4rem",
+                    },
                   }}
                 >
                   Chứng nhận challenges running during tet 2025
                 </Typography>
+                <img
+                  width="100%"
+                  src="/rt3g_tet-2025-running-challenge-banner.jpg"
+                  alt="chungnhan_rt3g_tet_2025"
+                />
                 <Typography
-                  variant="subtitle1"
+                  variant="body1"
                   gutterBottom
                   sx={{
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    height: "12.5rem",
+                    minHeight: {
+                      xs: "6.25rem",
+                      sm: "6.25rem",
+                      md: "6.25rem",
+                      lg: "9.375rem",
+                      xl: "12.5rem",
+                    },
                     color: "#343a40",
-                    fontSize: "1.28rem",
+                    marginBottom: "4rem",
+                    marginTop: "2rem",
                   }}
                 >
                   Chúc mừng bạn đã hoàn thành xuất sắc thử thách
-                  &quot;Challenges Running During Tết 2025&quot;! 🎉✨<br></br>
-                  Sự nỗ lực và quyết tâm của bạn thật đáng ngưỡng mộ. Đây không
-                  chỉ là thành quả của sức bền mà còn là tinh thần kiên trì vượt
-                  qua chính mình. Hãy tiếp tục duy trì năng lượng tích cực này
-                  trong năm mới nhé! 🏃‍♂️💪🎇<br></br>
-                  Chúc bạn một năm 2025 thật nhiều thành công và sức khỏe! 🧧🌟
+                  &quot;Challenges Running During Tết 2025&quot;! <br></br>
+                  <br></br>
+                  Sự nỗ lực và quyết tâm của bạn thật đáng ngưỡng mộ! Đây không
+                  chỉ là minh chứng cho sức bền mà còn thể hiện tinh thần kiên
+                  trì, không ngừng vượt qua giới hạn của bản thân. Hãy tiếp tục
+                  duy trì năng lượng tích cực này trong năm mới nhé!<br></br>
+                  <br></br>
+                  Để ghi nhận thành tích xuất sắc này, chúng tôi xin gửi đến bạn
+                  Chứng nhận Hoàn thành như một lời tôn vinh những cố gắng không
+                  ngừng nghỉ của bạn.<br></br>
+                  <br></br>
+                  Chúc bạn một năm 2025 thật nhiều thành công, sức khỏe và những
+                  bước chạy đầy cảm hứng!
                 </Typography>
               </Container>
               <FormControl
@@ -240,25 +299,32 @@ export default function SimpleContainer() {
                   alignItems: "center",
                   justifyContent: "center",
                   flexDirection: "column",
+                  minHeight: {
+                    xs: "6.25rem",
+                    sm: "6.25rem",
+                    md: "6.25rem",
+                    lg: "9.375rem",
+                    xl: "12.5rem",
+                  },
                 }}
               >
                 <Container>
-                  {" "}
                   <Container
                     sx={{
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      height: "12.5rem",
                     }}
                   >
                     <TextField
                       required
+                      color="salmon"
                       id="outlined-required"
                       label="Họ & tên của bạn"
                       variant="outlined"
                       value={fullName}
                       onChange={(e) => setFullname(e.target.value)}
+                      sx={{ width: "300px", marginBottom: "2rem" }}
                     />
                   </Container>
                   <Container
@@ -269,12 +335,14 @@ export default function SimpleContainer() {
                     }}
                   >
                     <Button
+                      size="small"
                       component="label"
                       color="salmon"
                       role={undefined}
                       variant="contained"
                       tabIndex={-1}
                       startIcon={<CloudUploadIcon />}
+                      sx={{ marginBottom: "2rem" }}
                     >
                       Tải lên Avatar của bạn
                       <VisuallyHiddenInput
@@ -293,7 +361,6 @@ export default function SimpleContainer() {
                     justifyContent: "center",
                     flexDirection: "column",
                     gap: "1.6rem",
-                    height: "12.5rem",
                   }}
                 >
                   <Button
@@ -312,94 +379,113 @@ export default function SimpleContainer() {
                       justifyContent: "center",
                       flexDirection: "column",
                       gap: "1.6rem",
-                      height: "1rem",
+                      minHeight: "2rem",
                     }}
                   >
-                    {error ? (
-                      <Typography
-                        variant="paragraph"
-                        gutterBottom
+                    <Typography
+                      variant="paragraph"
+                      gutterBottom
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "#e03131",
+                        textAlign: "center",
+                      }}
+                    >
+                      {error}
+                    </Typography>
+                  </Container>
+                </Container>
+              </FormControl>
+              {imageUrl ? (
+                <>
+                  <Container
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      minHeight: {
+                        xs: "12.5rem",
+                        sm: "12.5rem",
+                        md: "12.5rem",
+                        lg: "18.75rem",
+                        xl: "25rem",
+                      },
+                      position: "relative",
+                    }}
+                  >
+                    <img
+                      width="100%"
+                      src={imageUrl}
+                      alt="chungnhan_rt3g_tet_2025"
+                      onLoad={handleImageLoad}
+                    />
+
+                    {!isLoaded || loading ? (
+                      <Box
                         sx={{
                           display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          color: "#e03131",
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
                         }}
                       >
-                        {error}
-                      </Typography>
+                        <CircularProgress color="salmon" />
+                      </Box>
                     ) : (
                       ""
                     )}
                   </Container>
-                </Container>
-              </FormControl>
-
-              <Container
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  height: "25rem",
-                  position: "relative",
-                }}
-              >
-                {imageUrl ? (
-                  <img
-                    height="100%"
-                    src={imageUrl}
-                    alt="chungnhan_rt3g_tet_2025"
-                    onLoad={handleImageLoad}
-                  />
-                ) : (
-                  ""
-                )}
-                {!isLoaded || loading ? (
-                  <Box
+                  <Container
                     sx={{
                       display: "flex",
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      minHeight: {
+                        xs: "6.25rem",
+                        sm: "6.25rem",
+                        md: "6.25rem",
+                        lg: "9.375rem",
+                        xl: "12.5rem",
+                      },
                     }}
                   >
-                    <CircularProgress color="salmon" />
-                  </Box>
-                ) : (
-                  ""
-                )}
-              </Container>
+                    {imageUrl && isLoaded ? (
+                      <Button
+                        color="salmon"
+                        variant="contained"
+                        startIcon={<DownloadIcon />}
+                        onClick={() => handleDownload(imageUrl)}
+                      >
+                        Tải chứng nhận
+                      </Button>
+                    ) : (
+                      ""
+                    )}
+                  </Container>
+                </>
+              ) : (
+                ""
+              )}
               <Container
                 sx={{
                   display: "flex",
-                  alignItems: "center",
+                  flexDirection: "column",
                   justifyContent: "center",
-                  height: "12.5rem",
+                  alignItems: "center",
+                  gap: "0.5rem",
                 }}
               >
-                {imageUrl && isLoaded ? (
-                  <Button
-                    color="salmon"
-                    variant="contained"
-                    startIcon={<DownloadIcon />}
-                    onClick={() => handleDownload(imageUrl)}
-                  >
-                    Tải chứng nhận
-                  </Button>
-                ) : (
-                  ""
-                )}
-              </Container>
-              <Container>
+                <img width="100px" src="/rt3g_logo.png" alt="rt3g_logo" />
                 <Typography
-                  variant="paragraph"
+                  variant="caption"
                   gutterBottom
                   sx={{
                     display: "flex",
                     alignItems: "flex-end",
                     justifyContent: "center",
-                    color: "#026E80",
-                    fontWeight: "bold",
+                    fontSize: "0.6rem",
                   }}
                 >
                   Rèn Thân 3 Gốc © 2025 All Rights Reserved
